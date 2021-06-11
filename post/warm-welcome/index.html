@@ -101,7 +101,7 @@
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-06-11</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;888 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;887 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;No tag</span>
 
@@ -111,8 +111,8 @@
         <p>So Welcome To Our First Post in BinaryLab. in this Post we Going to checkout the WarmWelcome Challenge in S4CTF(Peykar).</p>
 <p>Category:Reverse</p>
 <h2 id="solution">Solution</h2>
-<p>For first step, I opened the program on <strong>r2</strong> and carefully examined the main function.</p>
-<pre><code class="language-‌c++">
+<p>for first step, i opened the program in <strong>r2</strong> and carefully examined the main function.</p>
+<pre><code class="language-‌">
 [0x0000139f]&gt; pdgo
     0x0000139f    |undefined8
     0x0000139f    |main(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5,
@@ -231,8 +231,7 @@
 [0x0000139f]&gt; 
 
 </code></pre>
-<p>As you can see, at the beginning of the program we have a loop that is most likely related to the fireworks display. To easily debug the program, we can disable it by rewrite <strong>JMP</strong> Instruction in <strong>0x0000147d</strong> address.
-In the following program code, the expressions printed by the <strong>puts</strong> function. also we can see <strong>read</strong> Syscall , that takes input from the user and store it in stack.</p>
+<p>As you can see, at the beginning of the program we have a loop that is most likely related to the fireworks display. To easily debug the program, we can disable it by Rewrite <strong>JMP</strong> Instruction in <strong>0x0000147d</strong> address. In the following program code, the expressions printed by the <strong>puts</strong> function. also we can see <strong>read</strong> Syscall , that takes input from the user and store it in stack.</p>
 <p>and finally , program have a condition and this is all of the problem :D . so let&rsquo;s go to set BreakPoint on conditions. The points required to set the BreakPoints are between <strong>0x0000176c</strong> and <strong>0x0000189c</strong>.
 now we ready to start debugging. For Start we most have a Specific string.I used all uppercase and lowercase letters to recognize the results. <code>abcdefghijklmnopqrstuvwxjzABCDEFGHIJKLMNOPQRSTUVWXYZ</code></p>
 <p>in debugging process , we check values and replace it with our string letters. For convenience, you can use the following code to store data:</p>
@@ -262,7 +261,6 @@ if  __name__  ==  &quot;__main__&quot;:
 
 </code></pre>
 <p>and finally we got the flag :D  &raquo; <code>S4CTF{A_v3ry_Warm_We1c0m3_fr0m_S4LAB_enj0y_Th3_F14g}</code></p>
-<p>Author:Sudoeruser</p>
     </div>
 </article>
 
