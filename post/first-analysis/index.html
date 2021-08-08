@@ -107,7 +107,7 @@ but As you know, there is always good news among bad news :). The UPX is an Open
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-08-06</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1061 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1056 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/upx">UPX</a>&nbsp;<a href="/tags/unpacking">Unpacking</a>&nbsp;<a href="/tags/malware">Malware</a>&nbsp;<a href="/tags/analyzing">Analyzing</a>&nbsp;<a href="/tags/reversing">Reversing</a>&nbsp;</span>
 
@@ -268,12 +268,11 @@ If the calling process is privileged (i.e., its real UID is zero), then an X_OK 
     var_11h._0_1_ = 0x90;
     stack0xffffffffffffffee = 0xaa55;
     sym.fseek(arg1, 0, 0);
-    sym.puts(&quot;Hello after seek&quot;);
     for (var_11h._1_4_ = 0; ((int32_t)var_11h._1_4_ &lt; 0x1fe &amp;&amp; (var_11h._1_4_ &lt; 0x1b9));
         var_11h._1_4_ = var_11h._1_4_ + 1) {
         sym._IO_fwrite((int64_t)(obj.bootloader + (int32_t)var_11h._1_4_), 1, 1, arg1);
     }
-    sym.puts(&quot;AFter loop&quot;);
+    
     if ((int32_t)var_11h._1_4_ &lt; 0x1fd) {
         for (; (int32_t)var_11h._1_4_ &lt; 0x1fe; var_11h._1_4_ = var_11h._1_4_ + 1) {
             sym._IO_fwrite((int64_t)&amp;var_11h, 1, 1, arg1);
