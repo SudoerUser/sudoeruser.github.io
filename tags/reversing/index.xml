@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on Sudoeruser</title>
-    <link>https://sudoeruser.github.io/post/</link>
-    <description>Recent content in Posts on Sudoeruser</description>
+    <title>Reversing on Sudoeruser</title>
+    <link>https://sudoeruser.github.io/tags/reversing/</link>
+    <description>Recent content in Reversing on Sudoeruser</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 06 Aug 2021 17:55:04 +0430</lastBuildDate><atom:link href="https://sudoeruser.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 06 Aug 2021 17:55:04 +0430</lastBuildDate><atom:link href="https://sudoeruser.github.io/tags/reversing/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>My First Malware Analysis</title>
       <link>https://sudoeruser.github.io/post/first-analysis/</link>
@@ -16,16 +16,6 @@
       <description>&lt;p&gt;Last month, one of my friends sent me a challenge in the reverse engineering field. In the beginning, I was busy and I could not work on this challenge. But one thing caught my eye. And it was a binary compressed using UPX.&lt;/p&gt;
 &lt;p&gt;I tried to decompress that with the UPX program but it did not work. so I created a new binary and compared them in hexdump view. several parts related to UPX headers had changed. The bad news was that I had no idea about the headers of this program.
 but As you know, there is always good news among bad news :). The UPX is an Open Source Program and we can check the codes.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Warm Welcome</title>
-      <link>https://sudoeruser.github.io/post/warm-welcome/</link>
-      <pubDate>Fri, 11 Jun 2021 14:44:35 +0430</pubDate>
-      
-      <guid>https://sudoeruser.github.io/post/warm-welcome/</guid>
-      <description>&lt;p&gt;in this post we going to checkout the WarmWelcome challenge in S4CTF(Peykar).&lt;/p&gt;
-&lt;p&gt;Category:Reverse&lt;/p&gt;</description>
     </item>
     
   </channel>

