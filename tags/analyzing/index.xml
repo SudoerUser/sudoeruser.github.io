@@ -14,8 +14,9 @@
       
       <guid>https://sudoeruser.github.io/post/first-analysis/</guid>
       <description>&lt;p&gt;Last month, one of my friends sent me a challenge in the reverse engineering field. In the beginning, I was busy and I could not work on this challenge. But one thing caught my eye. And it was a binary compressed using UPX.&lt;/p&gt;
-&lt;p&gt;I tried to decompress that with the UPX program but it did not work. so I created a new binary and compared them in hexdump view. several parts related to UPX headers had changed. The bad news was that I had no idea about the headers of this program.
-but As you know, there is always good news among bad news :). The UPX is an Open Source Program and we can check the codes.&lt;/p&gt;</description>
+&lt;p&gt;I tried to decompress that with the UPX program but it did not work. so I created a new binary and compared them in hexdump view. several parts related to UPX headers had changed. The bad news was that I had no idea about the headers of this program. but As you know, there is always good news among bad news :). The UPX is an Open Source Program and we can check the codes.&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://sudoeruser.github.io/img/First-Analysis-UPX-Diff.png&#34; alt=&#34;Binary Changes&#34; /&gt;
+&lt;/p&gt;</description>
     </item>
     
   </channel>

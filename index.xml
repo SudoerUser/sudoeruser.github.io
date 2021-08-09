@@ -14,8 +14,9 @@
       
       <guid>https://sudoeruser.github.io/post/first-analysis/</guid>
       <description>&lt;p&gt;Last month, one of my friends sent me a challenge in the reverse engineering field. In the beginning, I was busy and I could not work on this challenge. But one thing caught my eye. And it was a binary compressed using UPX.&lt;/p&gt;
-&lt;p&gt;I tried to decompress that with the UPX program but it did not work. so I created a new binary and compared them in hexdump view. several parts related to UPX headers had changed. The bad news was that I had no idea about the headers of this program.
-but As you know, there is always good news among bad news :). The UPX is an Open Source Program and we can check the codes.&lt;/p&gt;</description>
+&lt;p&gt;I tried to decompress that with the UPX program but it did not work. so I created a new binary and compared them in hexdump view. several parts related to UPX headers had changed. The bad news was that I had no idea about the headers of this program. but As you know, there is always good news among bad news :). The UPX is an Open Source Program and we can check the codes.&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://sudoeruser.github.io/img/First-Analysis-UPX-Diff.png&#34; alt=&#34;Binary Changes&#34; /&gt;
+&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -29,15 +30,12 @@ but As you know, there is always good news among bad news :). The UPX is an Open
     </item>
     
     <item>
-      <title>About Hugo</title>
+      <title>About Me</title>
       <link>https://sudoeruser.github.io/about/</link>
       <pubDate>Sat, 11 Apr 2020 19:15:32 +0800</pubDate>
       
       <guid>https://sudoeruser.github.io/about/</guid>
-      <description>Written in Go, Hugo is an open source static site generator available under the Apache Licence 2.0. Hugo supports TOML, YAML and JSON data file types, Markdown and HTML content files and uses shortcodes to add rich content. Other notable features are taxonomies, multilingual mode, image processing, custom output formats, HTML/CSS/JS minification and support for Sass SCSS workflows.
-Hugo makes use of a variety of open source projects including:
- https://github.com/yuin/goldmark https://github.com/alecthomas/chroma https://github.com/muesli/smartcrop https://github.com/spf13/cobra https://github.com/spf13/viper  Hugo is ideal for blogs, corporate websites, creative portfolios, online magazines, single page applications or even a website with thousands of pages.
-Hugo is for people who want to hand code their own website without worrying about setting up complicated runtimes, dependencies and databases.</description>
+      <description>My Name Is Amir M. Jahangirzadeh also Khown as sudoeruser. I am a Computer Engineering Student, Software Reverse Engineer and Malware Analyzer.</description>
     </item>
     
   </channel>
