@@ -109,7 +109,7 @@ I tried to decompress that with the UPX program but it did not work. so I create
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-08-06</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1227 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1237 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/upx">UPX</a>&nbsp;<a href="/tags/unpacking">Unpacking</a>&nbsp;<a href="/tags/malware">Malware</a>&nbsp;<a href="/tags/analyzing">Analyzing</a>&nbsp;<a href="/tags/reversing">Reversing</a>&nbsp;</span>
 
@@ -121,14 +121,7 @@ I tried to decompress that with the UPX program but it did not work. so I create
 <p><img class="img-zoomable" src="/img/First-Analysis-UPX-Diff.png" alt="Binary Changes" />
 </p>
 <h2 id="main">Main</h2>
-<p>so I started reading the UPX codes and research about headers offset (i write the links in Resources Table).</p>
-<p><img class="img-zoomable" src="https://cujo.com/wp-content/uploads/2020/08/upx14.png" alt="UPX1" />
-</p>
-<p><img class="img-zoomable" src="https://cujo.com/wp-content/uploads/2020/08/upx15.png" alt="UPX2" />
-</p>
-<p><img class="img-zoomable" src="https://cujo.com/wp-content/uploads/2020/08/upx16.png" alt="UPX3" />
-</p>
-<p>well, for Better Analysis, I want to Unpack this Binary. for unpacking usually exists Two Methods:</p>
+<p>so I started reading the UPX codes and research about headers offset (i write the links in Resources Table).well, for Better Analysis, I want to Unpack this Binary. for unpacking usually exists Two Methods:</p>
 <ol>
 <li>Manual Unpacking</li>
 <li>Binary Fixing</li>
@@ -163,11 +156,16 @@ struct p_info       // 12-byte packed program header follows stub loader
 };
 </code></pre>
 <p>if you want see more <a href="https://github.com/upx/upx/blob/master/src/stub/src/include/linux.h#L685"> Click Here </a></p>
-<p>well, I wanted to fix the headers by reading another UPX binary. but there is a problem. UPX uses <strong>filesize</strong> for unpacking. at first, I created a fuzzer for <strong>p_filesize</strong> header bytes But it took a long time to do. suddenly I saw an amazing thing:). the <strong>p_filesize</strong> field exists in two places. first in begin of UPX headers (The field that was destroyed) and second at end of the file.</p>
+<p>well, I wanted to fix the headers by reading another UPX binary. but there is a problem. UPX uses <strong>filesize</strong> for unpacking. at first, I created a fuzzer for <strong>p_filesize</strong> header bytes But it took a long time to do. suddenly I saw an amazing thing:). the <strong>p_filesize</strong> field exists in two places. first in begin of UPX headers (The field that was destroyed) and second at end of the file. You can see the headers offset in these pictures:</p>
+<p><img class="img-zoomable" src="https://cujo.com/wp-content/uploads/2020/08/upx14.png" alt="UPX1" />
+</p>
+<p><img class="img-zoomable" src="https://cujo.com/wp-content/uploads/2020/08/upx15.png" alt="UPX2" />
+</p>
+<p><img class="img-zoomable" src="https://cujo.com/wp-content/uploads/2020/08/upx16.png" alt="UPX3" />
+</p>
 <p>so I set the byte values and unpacked the file And this is the beginning of the adventure :).</p>
 <h3 id="review">Review</h3>
-<p>now understanding the program is very easy. I opened the file in <strong>radare2</strong>. We can do a lot of work now.</p>
-<p>I seek the main function and its result:</p>
+<p>now understanding the program is very easy. I opened the file in <strong>radare2</strong>. We can do a lot of work now. I seek the main function and its result:</p>
 <p><img class="img-zoomable" src="/img/First-Analysis-Disas-main.png" alt="first-analysis-disas-main" />
 </p>
 <p>At first glance, we can see the strings, function names, and their arguments. but let’s see the decompiled view:</p>
@@ -357,7 +355,8 @@ If the calling process is privileged (i.e., its real UID is zero), then an X_OK 
 </tbody>
 </table>
 <h2 id="resources">Resources</h2>
-<p><a href="https://cujo.com/upx-anti-unpacking-techniques-in-iot-malware/">Cujo.com</a></p>
+<p><a href="https://cujo.com/upx-anti-unpacking-techniques-in-iot-malware/">Cujo.com</a>
+<a href="https://github.com/upx/upx"> UPX Source </a></p>
     </div>
 </article>
 
